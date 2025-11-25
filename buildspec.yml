@@ -1,5 +1,9 @@
 version: 0.2
 
+env:
+  variables:
+    LAMBDA_NAME: MyCICDLambda    # change if desired in CodeBuild env vars
+
 phases:
   install:
     runtime-versions:
@@ -17,6 +21,13 @@ phases:
       - cd package
       - zip -r ../deployment-package.zip .
       - cd ..
+      - ls -l deployment-package.zip
+
+  post_build:
+    commands:
+      - echo "Updating Lambda function $LAMBDA_NAME"
+      - aws lambda update-function-code --function-name "$LAMBDA_NAME" --zip-file fileb://deployment-package.zip --publish
+      - echo "Lambda update completed."
 
 artifacts:
   files:
