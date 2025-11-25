@@ -8,14 +8,17 @@ phases:
       - echo "Installing dependencies (if any)"
       - pip install --upgrade pip
       - if [ -s requirements.txt ]; then pip install -r requirements.txt -t package; fi
+
   build:
     commands:
-      - echo "Prepare deployment package"
+      - echo "Preparing deployment package"
       - mkdir -p package
       - cp lambda_function.py package/
-      - if [ -d package ]; then cd package; zip -r ../deployment-package.zip .; cd ..; fi
+      - cd package
+      - zip -r ../deployment-package.zip .
+      - cd ..
+
 artifacts:
   files:
     - deployment-package.zip
   discard-paths: yes
-
